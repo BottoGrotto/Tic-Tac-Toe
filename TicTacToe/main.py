@@ -44,24 +44,15 @@ def updateGrid(userInput: int, userType: str) -> bool:
             state = grid[r][c]
             if state != "═":
                 pos += 1
-                # print(f"This is grid[r][c]: {grid[r][c]}" )
-                # print(f"This is userType {userType}")
-                # print(f"This is userInput: {userInput}" )
-                # print(f"This is pos {pos-1}")
                 if userInput == pos-1 and grid[r][c] != "X" and grid[r][c] != "O":
                     grid[r][c] = userType
                     os.system("cls")
-                    # print("Stata is true")
                     return True
                 elif userInput == pos-1 and grid[r][c] == "X" and grid[r][c] == "O":
                     os.system("cls")
-                    # print("Stata is false")
                     return False
                 else:
-                    os.system("cls")
-    
-    # printOutGrid(grid)
-    
+                    os.system("cls") 
 
 def findRemaining() -> list:
     listToReturn = []
@@ -124,90 +115,69 @@ player = ""
 winnerType = "X"
 stata = True
 os.system("cls")
-while userInput != "stop":
-    if gameState == 1:
-        user1Name = input("User 1's Name: ")
-        user2Name = input("User 2's Name: ")
-        if user2Name == user1Name:
-            user2Name += " 2"
-        randomUser = random.randint(1,2)
-        if randomUser == 1:
-            player = user1Name
-            user1Type = "X"
-            user2Type = "O"
-        else:
-            player = user2Name
-            user2Type = "X"
-            user1Type = "O"
+if __name__ == "__main__":
+    while userInput != "stop":
+        if gameState == 1:
+            user1Name = input("User 1's Name: ")
+            user2Name = input("User 2's Name: ")
+            if user2Name == user1Name:
+                user2Name += " 2"
+            randomUser = random.randint(1,2)
+            if randomUser == 1:
+                player = user1Name
+                user1Type = "X"
+                user2Type = "O"
+            else:
+                player = user2Name
+                user2Type = "X"
+                user1Type = "O"
 
-        os.system("cls")
-        gameState = 2
-
-    if gameState == 2:
-        os.system("cls")
-        printEssentials(player, grid)
-        userInput = input("Choose place to switch: ")
-        if userInput == "stop":
-            break
-
-        didSomeonePutAStr = userInput.isnumeric()
-        while didSomeonePutAStr != True:
-            userInput = input("Please input a number!: ")
-            didSomeonePutAStr = userInput.isnumeric()
-            stata = updateGrid(userInput=int(userInput), userType=userType)
             os.system("cls")
+            gameState = 2
+
+        if gameState == 2:
+            os.system("cls")
+            printEssentials(player, grid)
+            userInput = input("Choose place to switch: ")
+            if userInput == "stop":
+                break
+
+            didSomeonePutAStr = userInput.isnumeric()
+            while didSomeonePutAStr != True:
+                userInput = input("Please input a number!: ")
+                didSomeonePutAStr = userInput.isnumeric()
+                stata = updateGrid(userInput=int(userInput), userType=userType)
+                os.system("cls")
+                playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
+                player = playerUserType[0]
+                userType = playerUserType[1]
+                printEssentials(player, grid)
+            
+            didSomeonePutAStr = userInput.isnumeric()
+            while didSomeonePutAStr:
+                userInput = int(userInput)
+                stata = updateGrid(userInput, userType=userType)
+                if (userInput > 9):
+                    theChecker = checkUserInput(int(userInput))
+                    while theChecker == True:
+                        printEssentials(player, grid)
+                        userInput = input(f"Please input any of these numbers:| {findRemaining()} |: ")
+                        if str(userInput).isnumeric():
+                            stata = updateGrid(userInput=userInput, userType=userType)
+                            theChecker = False
+                        else:
+                            while userInput.isnumeric() == False:
+                                userInput = input("Please input a number!: ")
+                            if userInput.isnumeric() == True:
+                                stata = updateGrid(userInput=int(userInput), userType=userType)
+                                playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
+                                player = playerUserType[0]
+                                userType = playerUserType[1]
+                else:
+                    didSomeonePutAStr = False
+            
             playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
             player = playerUserType[0]
             userType = playerUserType[1]
-            printEssentials(player, grid)
-        
-        didSomeonePutAStr = userInput.isnumeric()
-        while didSomeonePutAStr:
-            userInput = int(userInput)
-            stata = updateGrid(userInput, userType=userType)
-            if (userInput > 9):
-                theChecker = checkUserInput(int(userInput))
-                while theChecker == True:
-                    printEssentials(player, grid)
-                    userInput = input(f"Please input any of these numbers:| {findRemaining()} |: ")
-                    if str(userInput).isnumeric():
-                        stata = updateGrid(userInput=userInput, userType=userType)
-                        theChecker = False
-                    else:
-                        while userInput.isnumeric() == False:
-                            userInput = input("Please input a number!: ")
-                        if userInput.isnumeric() == True:
-                            stata = updateGrid(userInput=int(userInput), userType=userType)
-                            playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
-                            player = playerUserType[0]
-                            userType = playerUserType[1]
-            else:
-                didSomeonePutAStr = False
-        
-        playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
-        player = playerUserType[0]
-        userType = playerUserType[1]
-            # stata = updateGrid(userInput=userInput, userType=userType)
-        # elif stata == False:
-        #     stata = True
-            # print("What is happening")
-            # print("Do it again")
-    if gameState == 3:
-        print("WooHoo!") 
-            
-    #     checkedWinOut = checkWin()
-    #     if checkedWinOut[1]:
-    #         gameState = 3
-    # if gameState == 3:
-    #     print(checkedWinOut[0])
-            
-            
-                
-        
-    
-    
-
-# printOutGrid(grid)
-# userInput = int(input("Choose place to switch: "))
-# updateGrid(userInput, "X")
-
+        if gameState == 3:
+            print("WooHoo!") 
