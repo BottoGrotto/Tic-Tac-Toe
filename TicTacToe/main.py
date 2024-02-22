@@ -9,30 +9,31 @@ grid: list = [[
                 "¹", "²", "³"
                 ],
               [
-                "═", "═", "═"
+                "═══", "═══", "═══"
                 ],
               [
                 "⁴", "⁵", "⁶"
                 ],
               [
-                "═", "═", "═"
+                "═══", "═══", "═══"
                 ],
               [
                 "⁷", "⁸", "⁹"
                 ],]
 
 def printPlayer(player) -> None:
-    console.print(f"{player}'s turn!:", style="Bold rgb(127,255,212) underline")
+    console.print(f"{player}'s turn!:\n", style="Bold rgb(127,255,212) underline")
 
 def printOutInfo(user1Name: str, user2Name: str, user1Type: str, user2Type: str) -> None:
     user1Output = user1Name + ": " + user1Type + "\n"
     user2Output = user2Name + ": " + user2Type + "\n"
     lineLength = max(len(user1Output), len(user2Output))
+    os.system(operator)
     console.print(
-            f"[purple]{"─"*lineLength}[/purple]\n"
+            f"[purple]{'─'*lineLength}[/purple]\n"
             f"{user1Output}"
             f"{user2Output}"
-            f"[purple]{"─"*lineLength}[/purple]"
+            f"[purple]{'─'*lineLength}[/purple]"
           )
 
 def printOutGrid(list: list) -> None:
@@ -40,15 +41,15 @@ def printOutGrid(list: list) -> None:
     for r, row in enumerate(grid):
         for c, col in enumerate(grid[r]):
 
-            if grid[r][c] != "═" and c != 0:
-                output += "[green]║[/green]" + f"[blue]{grid[r][c]}[/blue]"
-            elif c == 0 and grid[r][c] != "═":
-                output += "[green] [/green]" + f"[blue]{grid[r][c]}[/blue]"
+            if (grid[r][c] != "═══") and c != 0:
+                output += "[green] ║ [/green]" + f"[blue]{grid[r][c]}[/blue]"
+            elif c == 0 and (grid[r][c] != "═══"):
+                output += "[green] [/green]" + f"[blue] {grid[r][c]}[/blue]"
             elif c == 0:
                 output += "[green] [/green]" + f"[green]{grid[r][c]}[/green]"
             else: 
                 output += "[green]╬[/green]" + f"[green]{grid[r][c]}[green]"
-        if grid[r][c] != "═":
+        if grid[r][c] != "═══":
             if r < 4:
                 output += "\n"
         else:
@@ -60,7 +61,7 @@ def updateGrid(player: str, userInput: int, userType: str) -> bool:
     for r, row in enumerate(grid):
         for c, col in enumerate(grid[r]):
             state = grid[r][c]
-            if state != "═":
+            if state != "═══":
                 pos += 1
                 if userInput == pos-1 and grid[r][c] != "X" and grid[r][c] != "O":
                     grid[r][c] = userType
@@ -77,8 +78,7 @@ def updateGrid(player: str, userInput: int, userType: str) -> bool:
                     
                     return False
                 else:
-                    os.system(operator) 
-    
+                    os.system(operator)  
 
 def findRemaining() -> list:
     listToReturn = []
@@ -86,7 +86,7 @@ def findRemaining() -> list:
     for r, row in enumerate(grid):
         for c, col in enumerate(grid[r]):
             state = grid[r][c]
-            if state != "═" and state != "X" and state != "O":
+            if state != "═══" and state != "X" and state != "O":
                 count += 1
                 listToReturn.append(count)
             elif state == "X" or state == "O": 
@@ -121,6 +121,7 @@ def updateTurns(stata: bool, player: str, user1Name: str, user2Name: str, userTy
     
 
 def updateTheData(player: str, user1Name: str, user2Name: str, userType: str, user1Type: str, user2Type: str, userInput: int) -> list:
+    """updates the grid with the users input and update the turn state"""
     stata = updateGrid(player, userInput=userInput, userType=userType)
     return updateTurns(stata, player, user1Name, user2Name, userType, user1Type, user2Type)
 
@@ -130,7 +131,7 @@ def BadInputChecker(player: str, userType: str) -> list:
     while theChecker == True:
         os.system(operator)
         printEssentials(player, user1Name, user2Name, user1Type, user2Type, grid)
-        userInput = console.input(f"[red]Please[/red] input any of these numbers:| {" ".join(map(str, findRemaining()))} |: ")
+        userInput = console.input(f"[red]PLEASE[/red] input any of these numbers:| {' '.join(map(str, findRemaining()))} |: ")
         if str(userInput).isnumeric():
             if checkUserInput(int(userInput)) == True:
                 stata = updateGrid(player, userInput, userType)
@@ -140,18 +141,19 @@ def BadInputChecker(player: str, userType: str) -> list:
     return [stata, userInput, playerUserType]
 
 def checkWin(grid) -> list:
+    """Checks if there is a valid win state in the grid and returns true if there is"""
     # Sweeps down:
     for row in grid:
         console.print(row)
-        if row != ["═", "═", "═"]:
+        if row != ["═══", "═══", "═══"]:
             if row[0] == row[1] and row[1] == row[2]:
-                print("YOU WIN up down")
+                print("YOU WIN sweep up - down")
                 return True
         # time.sleep(2)
     # Sweeps to the right:
     for c, col in enumerate(grid[0]):
         if grid[0][c] == grid[2][c] and grid[2][c] == grid[4][c]:
-            print("You win left right")
+            print("You win sweep left - right")
             return True
         
     # Diagonal Check:
@@ -162,6 +164,9 @@ def checkWin(grid) -> list:
         print("You win diag right - left")
         return True
     return False
+
+def printEndScreen() -> None:
+    pass
             
     
 userInput = ""
@@ -201,7 +206,7 @@ if __name__ == "__main__":
         if gameState == 2:
             os.system(operator)
             printEssentials(player, user1Name, user2Name, user1Type, user2Type, grid)
-            userInput = console.input(f"Input any of these numbers:| {" ".join(map(str, findRemaining()))} |: ")
+            userInput = console.input(f"Input any of these numbers:| {' '.join(map(str, findRemaining()))} |: ")
             if userInput == "stop":
                 break
 
@@ -209,7 +214,7 @@ if __name__ == "__main__":
             while didSomeonePutAStr != True:
                 os.system(operator)
                 printEssentials(player, user1Name, user2Name, user1Type, user2Type, grid)
-                userInput = console.input(f"[red]Please[/red] input any of these numbers:| {" ".join(map(str, findRemaining()))} |: ")
+                userInput = console.input(f"[red]Please[/red] input any of these numbers:| {' '.join(map(str, findRemaining()))} |: ")
                 if userInput.isnumeric():
                     playerUserType = updateTheData(player, user1Name, user2Name, userType, user1Type, user2Type, int(userInput))
                     player = playerUserType[0]
@@ -239,7 +244,7 @@ if __name__ == "__main__":
             if stata == True:
                 count += 1
             if count >= 4:
-                print(count)
+                # print(count)
                 
                 if count < 9:
                     winState = checkWin(grid)
@@ -251,6 +256,6 @@ if __name__ == "__main__":
                     console.print("Tie")
 
         if gameState == 3:
-            print("")
+            # print("")
             print("WooHoo!") 
             break
