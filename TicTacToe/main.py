@@ -54,7 +54,7 @@ def printOutGrid(list: list) -> None:
                 output += "\n"
         else:
             output += "\n"
-    console.print(output, style="green")
+    console.print(output + "\n", style="green")
 
 def updateGrid(player: str, userInput: int, userType: str) -> bool:
     pos = 1
@@ -140,42 +140,41 @@ def BadInputChecker(player: str, userType: str) -> list:
     
     return [stata, userInput, playerUserType]
 
-def checkWin(grid) -> list:
+def checkWin(grid: list) -> list:
     """Checks if there is a valid win state in the grid and returns true if there is"""
     # Sweeps down:
     for row in grid:
         console.print(row)
         if row != ["═══", "═══", "═══"]:
             if row[0] == row[1] and row[1] == row[2]:
-                print("YOU WIN sweep up - down")
+                print("WIN TYPE: sweep up - down")
                 return True
         # time.sleep(2)
     # Sweeps to the right:
     for c, col in enumerate(grid[0]):
         if grid[0][c] == grid[2][c] and grid[2][c] == grid[4][c]:
-            print("You win sweep left - right")
+            print("WIN TYPE: sweep left - right")
             return True
         
     # Diagonal Check:
     if grid[0][0] == grid[2][1] and grid[2][1] == grid[4][2]:
-        print("You win diag left - right")
+        print("WIN TYPE: diag left - right")
         return True
     elif grid[0][2] == grid[2][1] and grid[2][1] ==  grid[4][0]:
-        print("You win diag right - left")
+        print("WIN TYPE: diag right - left")
         return True
     return False
 
 def printEndScreen() -> None:
     pass
             
-    
-userInput = ""
-userType = "X"
-gameState = 1
-player = ""
-winnerType = "X"
-stata = True
-system = platform.system()
+userInput: str = ""
+userType: str = "X"
+gameState: int = 1
+player: str = ""
+winnerType: str = "X"
+stata: bool = True
+system: str = platform.system()
 if system == "Windows":
     operator = "cls"
 elif system == "Darwin":
@@ -189,7 +188,7 @@ if __name__ == "__main__":
             user1Name = console.input("[blue]User [red]One's[/red] Name: [/blue]")
             user2Name = console.input("[blue]User [red]Two's[/red] Name: [/blue]")
             if user2Name == user1Name:
-                user2Name += " 2"
+                user2Name += " the second"
             randomUser = random.randint(1,2)
             if randomUser == 1:
                 player = user1Name
@@ -238,24 +237,40 @@ if __name__ == "__main__":
                     didSomeonePutAStr = False
 
             playerUserType = updateTurns(stata=stata, player=player,user1Name=user1Name, user2Name=user2Name, userType=userType, user1Type=user1Type, user2Type=user2Type)
-            player = playerUserType[0]
-            userType = playerUserType[1]
+
             stata = playerUserType[2]
             if stata == True:
                 count += 1
+                player = playerUserType[0]
+                userType = playerUserType[1]
+            
             if count >= 4:
                 # print(count)
-                
                 if count < 9:
+                    # print(player)
+                    # print(userType)
+                    # time.sleep(0.2)
+                    # lastPlayer = player
                     winState = checkWin(grid)
                     if winState == True:
                         gameState = 3
                 else:
-                    time.sleep(1)
-                    gameState = 3
-                    console.print("Tie")
+                    # time.sleep(1)
+                    gameState = 4
+
 
         if gameState == 3:
             # print("")
+            if player == user1Name:
+                player = user2Name
+            else:
+                player = user1Name
+            print(f"{player} wins!")
             print("WooHoo!") 
+            # print (f"{lastPlayer} wins")
+            
             break
+
+        if gameState == 4:
+            console.print("Tie")
+            pass
